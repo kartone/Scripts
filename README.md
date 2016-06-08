@@ -1,2 +1,1 @@
-# scripts
-My useful scripts
+# Scripts Repository.
