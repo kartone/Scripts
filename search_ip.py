@@ -18,7 +18,7 @@ if len(sys.argv) == 1:
 
 try:
         # Setup the api
-        api = shodan.Shodan("RWEyxkMHcFjun3ol6VlKR2cETsn9X4yW")
+        api = shodan.Shodan("XXX")
 
         # Perform the search
         query = ' '.join(sys.argv[1:])
