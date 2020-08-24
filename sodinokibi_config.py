@@ -1,4 +1,7 @@
-"""Extract Sodinokibi ransomware configuration from a given exe/folder of exes"""
+# Extract Sodinokibi ransomware configuration from a given exe/folder of exes
+# Rif: https://blogs.blackberry.com/en/2019/07/threat-spotlight-sodinokibi-ransomware
+# Modified to use ARC4 library from a custom implementation and python3 compatibility
+
 import os
 import sys
 import scandir
