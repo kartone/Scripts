@@ -10,6 +10,7 @@ import string
 import struct
 import json
 from Crypto.Cipher import ARC4
+import hashlib
 
 def arc4(key, enc_data):
     var = ARC4.new(key)
@@ -17,7 +18,9 @@ def arc4(key, enc_data):
     return dec
 
 def extract_sodinokibi_config(filename):
-    print(filename)
+    with open(filename, "rb") as f:
+        bytes = f.read()
+        str_hash = hashlib.sha256(bytes).hexdigest()
     try:
         pe = pefile.PE(filename)
         section = pe.sections[3]
@@ -25,7 +28,11 @@ def extract_sodinokibi_config(filename):
         enc_len = struct.unpack('I', data[0x24:0x28])[0]
         dec_data = arc4(data[0:32], data[0x28:enc_len + 0x28])
         parsed = json.loads(dec_data[:-1])
-        print(json.dumps(parsed, indent=2, sort_keys=True))
+        # print(json.dumps(parsed, indent=2, sort_keys=False))
+        print("Sample SHA256 Hash: ", str_hash)
+        print("Actor ID: ", parsed['pid'])
+        # print("Campaign ID: ", parsed['sub'])
+        # print("Attacker's Public Encryption Key: ", parsed['pk']) 
     except Exception as e:
         print("ERROR - {}".format(e))
 
