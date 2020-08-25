@@ -2,16 +2,25 @@
 
 import requests
 import json
-import os
+import os, glob
 import pyzipper
 
 KEY = os.environ.get("API_KEY")
 ZIP_PASSWORD = b"infected"
+EXT_TO_CLEAN = "zip"
 
 data = { 'query': 'get_taginfo', 'tag': 'Sodinokibi' }
 response = requests.post('https://mb-api.abuse.ch/api/v1/', data = data, timeout=10)
 maldata = response.json()
 #print(json.dumps(maldata, indent=2, sort_keys=False))
+
+def housekeeping(ext):
+    try:
+        for f in glob.glob('*.'+ext):
+            os.remove(f)
+    except OSError as e:
+        print("Error: %s - %s " % (e.filename, e.strerror))
+
 
 def get_sample(hash):
     headers = { 'API-KEY': KEY } 
@@ -23,7 +32,6 @@ def get_sample(hash):
     with pyzipper.AESZipFile(hash+'.zip') as zf:
         zf.extractall(path=".", pwd=ZIP_PASSWORD)
         print("[+] Sample unpacked successfully")
-    os.remove(hash+'.zip')
 
 for i in range(len(maldata["data"])):
     for key in maldata["data"][i].keys():
@@ -31,3 +39,4 @@ for i in range(len(maldata["data"])):
             value = maldata["data"][i][key]
             print("[+] Downloading sample with ", key, "->", value)
             get_sample(value)
+            housekeeping(EXT_TO_CLEAN)
