@@ -34,9 +34,9 @@ def decode_sodinokibi_configuration(filename):
                 print("Campaign ID: ", parsed['sub'])
                 # print("Attacker's Public Encryption Key: ", parsed['pk']) 
     except Exception:
+        print("Skipping file:" + filename + " because of the error: {}".format(e))
         pass
-        # print("Skipping file:" + filename + " because of the error: {}".format(e))
-
+        
 def main():
     if os.path.isdir(sys.argv[1]):
             for root, dirs, files in scandir.walk(sys.argv[1]):
