@@ -28,19 +28,27 @@ def get_sample(hash):
         print("[+] Sample unpacked successfully")
 
 def main():
+    downloaded_sample = []
     data = { 'query': 'get_taginfo', 'tag': 'Sodinokibi' }
     response = requests.post('https://mb-api.abuse.ch/api/v1/', data = data, timeout=10)
     maldata = response.json()
     #print(json.dumps(maldata, indent=2, sort_keys=False))
+    print("[+] Retrieving the list of downloaded samples...")
+    for file in glob.glob("./samples/*.exe"):
+        filename = file.rstrip(".exe").lstrip("./samples/")
+        downloaded_sample.append(filename)
+    print(downloaded_sample)
     for i in range(len(maldata["data"])):
         if "Decryptor" not in maldata["data"][i]["tags"]:
             for key in maldata["data"][i].keys():
                 if key == "sha256_hash":
                     value = maldata["data"][i][key]
-                    print("[+] Downloading sample with ", key, "->", value)
-                    get_sample(value)
-                    housekeeping(EXT_TO_CLEAN)
-
+                    if value not in downloaded_sample:
+                        print("[+] Downloading sample with ", key, "->", value)
+                        #get_sample(value)
+                        #housekeeping(EXT_TO_CLEAN)
+        else:
+            print("[+] Skipping the sample because of Tag: Decryptor")
 if __name__ == "__main__":
     try:
         main()
