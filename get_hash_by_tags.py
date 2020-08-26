@@ -33,12 +33,13 @@ def main():
     maldata = response.json()
     #print(json.dumps(maldata, indent=2, sort_keys=False))
     for i in range(len(maldata["data"])):
-        for key in maldata["data"][i].keys():
-            if key == "sha256_hash":
-                value = maldata["data"][i][key]
-                print("[+] Downloading sample with ", key, "->", value)
-                get_sample(value)
-                housekeeping(EXT_TO_CLEAN)
+        if "Decryptor" not in maldata["data"][i]["tags"]:
+            for key in maldata["data"][i].keys():
+                if key == "sha256_hash":
+                    value = maldata["data"][i][key]
+                    print("[+] Downloading sample with ", key, "->", value)
+                    get_sample(value)
+                    housekeeping(EXT_TO_CLEAN)
 
 if __name__ == "__main__":
     try:

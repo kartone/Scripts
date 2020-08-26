@@ -33,9 +33,9 @@ def decode_sodinokibi_configuration(filename):
                 print("Actor ID: ", parsed['pid'])
                 print("Campaign ID: ", parsed['sub'])
                 # print("Attacker's Public Encryption Key: ", parsed['pk']) 
-    except Exception:
+    except Exception as e:
         print("Skipping file:" + filename + " because of the error: {}".format(e))
-        pass
+        #pass
         
 def main():
     if os.path.isdir(sys.argv[1]):
