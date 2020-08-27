@@ -5,11 +5,12 @@ import json
 import os, glob
 import pyzipper
 import ntpath
+from argparse import ArgumentParser
 
-KEY = os.environ.get("API_KEY")
 ZIP_PASSWORD = b"infected"
 EXT_TO_CLEAN = "zip"
-SAMPLES_PATH = "./samples/"
+KEY = ""
+SAMPLES_PATH = ""
 
 def housekeeping(ext):
     try:
@@ -30,8 +31,24 @@ def get_sample(hash):
         print("[+] Sample unpacked successfully")
 
 def main():
+    parser = ArgumentParser(description="A simple script that will download samples from Malware Bazaar API matching the user defined TAG")
+    parser.add_argument("path", help="Path where to save retrieved samples")
+    parser.add_argument("-d", "--download", dest="get_sample", help="Download samples from Malware Bazaar", default=False)
+    parser.add_argument("-c", "--housecleaning", dest="clean_sample", help="Delete temporary zip files", default =False)
+    parser.add_argument("-t", "--tag", dest="tag_sample", help="Tag to search for on Malware Bazaar", default="Sodinokibi")
+    parser.add_argument("-k", "--apikey", dest="api_key", help="Malware Bazaar API key")
+    args = parser.parse_args()
+    # print("arguments:", args)
+    
+    SAMPLES_PATH = args.path
+    
+    if args.api_key is not None:
+        KEY = args.api_key
+    else:
+        KEY = os.environ.get("API_KEY")
+
     downloaded_samples = []
-    data = { 'query': 'get_taginfo', 'tag': 'Sodinokibi' }
+    data = { 'query': 'get_taginfo', 'tag': args.tag_sample }
     response = requests.post('https://mb-api.abuse.ch/api/v1/', data = data, timeout=10)
     maldata = response.json()
     #print(json.dumps(maldata, indent=2, sort_keys=False))
@@ -48,10 +65,13 @@ def main():
                     value = maldata["data"][i][key]
                     if value not in downloaded_samples:
                         print("[+] Downloading sample with ", key, "->", value)
-                        get_sample(value)
-                        housekeeping(EXT_TO_CLEAN)
+                        if args.get_sample:
+                            get_sample(value)
+                        if args.clean_sample:
+                            housekeeping(EXT_TO_CLEAN)
         else:
             print("[+] Skipping the sample because of Tag: Decryptor")
+
 if __name__ == "__main__":
     try:
         main()
