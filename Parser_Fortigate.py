@@ -17,12 +17,15 @@ def search_pattern(l,f):
     
 def main():
     # Fields to be extracted from the logs and saved into the output file
-    pattern_str = ['date','time','type','action','dstcountry','dstip','dstport','logid','rcvdbyte','sentbyte','service','srccountry','srcip','srcport']
+    pattern_str = ['date','time','devid','type','action','devname','dstcountry','dstip','dstport','logid','rcvdbyte','sentbyte','service','srccountry','srcip','srcport']
     num_lines = sum(1 for line in open(filename))
     with open(filename, 'r') as f:
         with open(file_parsed, 'w') as w:
+            w.writelines("%s," % element for element in pattern_str)
+            w.write('\n')
             with alive_bar(num_lines) as bar:
                 for line in f.readlines():
+                    line = line.replace('"',"")
                     for field in pattern_str:
                         match = search_pattern(line, field)
                         if match is None:
