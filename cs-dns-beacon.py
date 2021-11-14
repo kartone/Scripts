@@ -5,7 +5,7 @@ from __future__ import print_function
 __description__ = 'Get Cobalt Strike DNS beacon'
 __author__ = 'Didier Stevens'
 __modified_by__ = 'Mario Ciccarelli'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __date__ = '2021/11/14'
 
 import string
